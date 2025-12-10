@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gerador de Senhas Seguras</title>
+  <style>
+  :root {
+  --bronze-escuro: #7d5a50;
+  --bronze-medio: #a67c52;
+  --areia: #c9b79c;
+  --creme: #d4c2a8;
+  --terra: #8c6e63;
+  --neon-dourado: #fff3b0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #a67c52, #c9b79c, #7d5a50, #d4c2a8, #8c6e63);
+  background-size: 400% 400%;
+  animation: moverGradiente 10s ease-in-out infinite;
+  color: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* centraliza verticalmente */
+  align-items: center;      /* centraliza horizontalmente */
+  height: 100dvh;           /* ✅ usa viewport dinâmica (corrige em celulares modernos) */
+  margin: 0;
+  padding: 0;               /* ✅ remove padding que causava scroll */
+  overflow: hidden;         /* ✅ remove a barra de rolagem */
+  box-sizing: border-box;
+}
+
+
+@keyframes moverGradiente {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ✨ partículas mantidas, leves */
+.particula {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: rgba(255, 230, 180, 0.8);
+  border-radius: 50%;
+  animation: brilhar 5s infinite ease-in-out;
+  z-index: 1;
+}
+
+@keyframes brilhar {
+  0%, 100% { opacity: 0; transform: scale(0.5); }
+  50% { opacity: 1; transform: scale(1.4); }
+}
+
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(25px);
+  border-radius: 20px;
+  padding: 2rem 2.5rem;
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+  border: 2px solid var(--areia);
+  box-shadow: 0 0 25px var(--neon-dourado);
+  animation: brilhoNeon 3s infinite alternate ease-in-out;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  box-sizing: border-box;
+  margin-bottom: 1.5rem; /* deixa espaço pro footer */
+}
+
+@keyframes brilhoNeon {
+  0% { box-shadow: 0 0 20px var(--neon-dourado), 0 0 40px rgba(255, 245, 200, 0.4); }
+  100% { box-shadow: 0 0 35px var(--neon-dourado), 0 0 80px rgba(255, 255, 230, 0.8); }
+}
+
+h1 {
+  color: black;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 15px var(--neon-dourado);
+}
+
+input[type="number"] {
+  width: 60px;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: none;
+  text-align: center;
+  outline: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: #000000;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0.5rem 0;
+  color: black;
+}
+
+/* 🔘 Botões */
+button {
+  display: block;
+  width: 100%;
+  background: linear-gradient(90deg, var(--bronze-escuro), var(--bronze-medio));
+  color: black;
+  border: none;
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+  box-shadow: 0 0 20px var(--neon-dourado);
+  animation: brilhoBotaoNeon 3s infinite alternate ease-in-out;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+button:hover {
+  background: linear-gradient(90deg, var(--bronze-medio), var(--bronze-escuro));
+  transform: scale(1.05);
+  box-shadow: 0 0 30px var(--neon-dourado), 0 0 60px rgba(255,255,220,0.7);
+}
+
+@keyframes brilhoBotaoNeon {
+  0% { box-shadow: 0 0 10px var(--neon-dourado), 0 0 20px rgba(255,255,200,0.3); }
+  100% { box-shadow: 0 0 25px var(--neon-dourado), 0 0 60px rgba(255,255,230,0.8); }
+}
+
+.senha-gerada {
+  margin-top: 1.5rem;
+  font-size: 1.2rem;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 0.8rem;
+  border-radius: 10px;
+  letter-spacing: 1px;
+  user-select: all;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: black;
+  animation: brilhoCaixa 4s infinite;
+}
+
+@keyframes brilhoCaixa {
+  0%, 100% { box-shadow: 0 0 10px var(--bronze-medio); }
+  50% { box-shadow: 0 0 25px var(--terra); }
+}
+
+.forca-container {
+  margin-top: 1rem;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  height: 10px;
+  width: 100%;
+  
+}
+
+.forca-barra {
+  height: 10px;
+  width: 0%;
+  background: var(--neon-dourado);
+  transition: width 0.4s ease, background 0.4s ease;
+}
+
+
+/* Responsividade */
+@media (max-width: 600px) {
+  body {
+    padding: 1.2rem;
+  }
+
+  .glass-card {
+    padding: 1.5rem;
+    max-width: 100%;
+    margin-bottom: 1rem; /* um pouco mais próximo em telas pequenas */
+  }
+
+  footer {
+    font-size: 0.85rem;
+  }
+}
+/* ✅ Checkboxes personalizados */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--bronze-escuro);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+  margin-right: 8px;
+}
+
+input[type="checkbox"]:hover {
+  box-shadow: 0 0 8px var(--bronze-medio);
+  border-color: var(--bronze-medio);
+}
+
+input[type="checkbox"]:checked {
+  background: linear-gradient(145deg, var(--bronze-medio), var(--terra));
+  border-color: var(--bronze-escuro);
+  box-shadow: 0 0 10px var(--bronze-medio);
+}
+
+input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 6px;
+  width: 5px;
+  height: 10px;
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  opacity: 0;
+  transform: rotate(45deg) scale(0.8);
+  transition: all 0.3s ease;
+}
+
+input[type="checkbox"]:checked::after {
+  opacity: 1;
+  transform: rotate(45deg) scale(1);
+}
+
+/* 🪩 Notificação */
+.notificacao {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  background: linear-gradient(135deg, var(--bronze-medio), var(--terra));
+  border-radius: 15px;
+  padding: 1.2rem 1.5rem;
+  text-align: center;
+  color: black;
+  border: 2px solid var(--neon-dourado);
+  box-shadow: 0 0 25px var(--neon-dourado);
+  transition: opacity 0.5s ease, transform 0.4s ease;
+  z-index: 9999;
+  max-width: 280px;
+  width: 85%;
+  animation: pulsarNotificacao 2s infinite alternate;
+  pointer-events: none;
+}
+
+.notificacao.ativa {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  pointer-events: auto;
+}
+
+.notificacao.fraca { border-color: red; box-shadow: 0 0 25px red; }
+.notificacao.media { border-color: orange; box-shadow: 0 0 25px orange; }
+.notificacao.forte { border-color: green; box-shadow: 0 0 25px green; }
+
+footer {
+  color: black;
+  text-align: center;
+  z-index: 10;
+}
+.senha-gerada {
+  margin-top: 0.5rem !important; /* diminui o espaço acima da senha gerada */
+}
+.forca-container {
+  margin-top: 0.5rem !important; /* aproxima a barra de força da senha */
+}
+
+button[onclick="copiarSenha()"] {
+  margin-top: 0.5rem !important; /* aproxima o botão 'Copiar' da senha */
+}
+
+
+
+  </style>
+</head>
+<body>
+  <div id="particulas"></div>
+
+  <div class="glass-card" id="card">
+    <h1>Gerador de Senhas</h1>
+
+    <label>Comprimento:
+      <input type="number" id="length" min="4" max="16" value="12">
+    </label>
+
+    <label><input type="checkbox" id="uppercase" checked> Letras maiúsculas</label>
+    <label><input type="checkbox" id="lowercase" checked> Letras minúsculas</label>
+    <label><input type="checkbox" id="numbers" checked> Números</label>
+    <label><input type="checkbox" id="symbols" checked> Símbolos</label>
+
+    <button  type="button" onclick="gerarSenha()">Gerar Senha</button>
+    <div class="senha-gerada" id="senha">Clique em “Gerar Senha”</div>
+    <div class="forca-container"><div class="forca-barra" id="forcaBarra"></div></div>
+    <button type="button" onclick="copiarSenha()">Copiar</button>
+
+    <div id="notificacao" class="notificacao">
+      <div>
+        <h2 id="tituloNotificacao"></h2>
+        <p id="mensagemNotificacao"></p>
+      </div>
+    </div>
+  </div>
+  
+ <footer>© Gabriel Borges. Todos os direitos reservados. • 2025</footer>
+
+  <script>
+   
+
+  
+
+    function gerarSenha() {
+      let length = parseInt(document.getElementById("length").value);
+      if (length > 16) {
+        length = 16;
+        document.getElementById("length").value = 16;
+        mostrarNotificacao("Limite Máximo!", "O tamanho máximo é 16 caracteres.", "media");
+      }
+
+      const incluirMaiusculas = document.getElementById("uppercase").checked;
+      const incluirMinusculas = document.getElementById("lowercase").checked;
+      const incluirNumeros = document.getElementById("numbers").checked;
+      const incluirSimbolos = document.getElementById("symbols").checked;
+
+      const letrasMaiusculas = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const letrasMinusculas = "abcdefghijklmnopqrstuvwxyz";
+      const numeros = "0123456789";
+      const simbolos = "!@#$%^&*()_+-=[]{}|;:',.<>?";
+
+      let caracteres = "";
+      if (incluirMaiusculas) caracteres += letrasMaiusculas;
+      if (incluirMinusculas) caracteres += letrasMinusculas;
+      if (incluirNumeros) caracteres += numeros;
+      if (incluirSimbolos) caracteres += simbolos;
+
+      if (caracteres === "") {
+        mostrarNotificacao("Erro ⚠️", "Selecione ao menos um tipo de caractere!", "fraca");
+        return;
+      }
+
+      let senha = "";
+      for (let i = 0; i < length; i++) {
+        senha += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+      }
+
+      document.getElementById("senha").innerText = senha;
+      avaliarForca(senha);
+    }
+
+    function copiarSenha() {
+      const senha = document.getElementById("senha").innerText;
+      if (!senha || senha.includes("Gerar Senha")) return;
+      navigator.clipboard.writeText(senha);
+      mostrarNotificacao("Senha Copiada!", "Sua senha foi copiada com sucesso.", "forte");
+    }
+
+    function avaliarForca(senha) {
+      const barra = document.getElementById("forcaBarra");
+      let pontuacao = 0;
+      if (senha.length >= 8) pontuacao++;
+      if (senha.length >= 12) pontuacao++;
+      if (/[A-Z]/.test(senha)) pontuacao++;
+      if (/[a-z]/.test(senha)) pontuacao++;
+      if (/[0-9]/.test(senha)) pontuacao++;
+      if (/[^A-Za-z0-9]/.test(senha)) pontuacao++;
+
+      barra.style.width = (pontuacao / 6) * 100 + "%";
+      if (pontuacao <= 2) {
+        barra.style.background = "red";
+        mostrarNotificacao("Senha Fraca", "Tente adicionar mais caracteres e símbolos.", "fraca");
+      } else if (pontuacao <= 4) {
+        barra.style.background = "orange";
+        mostrarNotificacao("Senha Média", "Está razoável, mas pode ser mais segura!", "media");
+      } else {
+        barra.style.background = " green";
+        mostrarNotificacao("Senha Forte", "Excelente! Sua senha está bem segura.", "forte");
+      }
+    }
+
+    function mostrarNotificacao(titulo, mensagem, tipo) {
+      const notificacao = document.getElementById("notificacao");
+      const tituloEl = document.getElementById("tituloNotificacao");
+      const mensagemEl = document.getElementById("mensagemNotificacao");
+
+      notificacao.className = `notificacao ativa ${tipo}`;
+      tituloEl.textContent = titulo;
+      mensagemEl.textContent = mensagem;
+
+      setTimeout(() => {
+        notificacao.classList.remove("ativa");
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
